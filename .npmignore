@@ -1,0 +1,39 @@
+# Source files (only publish dist/)
+src/
+*.test.ts
+*.spec.ts
+
+# Configuration files
+tsconfig.json
+vitest.config.ts
+rollup.config.js
+.eslintrc.*
+.prettierrc.*
+
+# Development files
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Environment files
+.env
+.env.*
+
+# Git files
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation (except README)
+docs/
+examples/
+
+# Only publish:
+# - dist/
+# - package.json
+# - README.md
+# - LICENSE
