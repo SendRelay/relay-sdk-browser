@@ -83,6 +83,7 @@ export interface TaskOfferedEvent {
 	status: 'OFFERED';
 	tier: number;
 	ridersOffered: number;
+	offerId?: string;
 	offeredAt: string;
 }
 
@@ -145,7 +146,8 @@ export interface TaskFailedEvent {
 export interface TaskCancelledEvent {
 	taskId: string;
 	developerId: string;
-	riderId?: string;
+	riderId?: string | null;
+	cancelledBy?: 'DEVELOPER' | 'RIDER';
 	status: 'CANCELLED';
 	cancelledAt: string;
 	reason?: string;
@@ -168,6 +170,7 @@ export interface StageCompletedEvent {
 	};
 	nextStageIndex?: number;
 	totalStages: number;
+	timestamp?: string;
 }
 
 /**

@@ -30,7 +30,9 @@ export function buildRelayWebSocketUrl({
     throw new ConnectionError(`Invalid WebSocket URL: missing host in "${baseUrl}"`);
   }
 
-  url.protocol = normalizeScheme(url.protocol);
+  // Browsers older than the 2024 WebSocket spec change reject http(s) URLs in
+  // `new WebSocket()`, so always hand back ws(s).
+  url.protocol = normalizeScheme(url.protocol) === 'https:' ? 'wss:' : 'ws:';
   if (url.port === '0') {
     url.port = '';
   }

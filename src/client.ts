@@ -59,7 +59,7 @@ export interface RelayRealtimeClientOptions {
    */
   getToken: (taskIds: string[]) => Promise<string> | string;
 
-  /** WebSocket URL (default: wss://ws.sendrelay.com.ng/v1) */
+  /** WebSocket URL (default: https://api.sendrelay.com.ng/v1/realtime/ws, connected as wss) */
   url?: string;
 
   /** Unique device ID (optional) */
