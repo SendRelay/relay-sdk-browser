@@ -136,3 +136,24 @@ describe('RelayRealtimeClient message parsing', () => {
     );
   });
 });
+
+it('guide interrupted tracking resubscribes on reopen without inventing a terminal status', async () => {
+  // Synthetic connection events: this does not exercise a real network outage.
+  const client = new RelayRealtimeClient({ getToken: async () => 'unused', autoRefresh: false });
+  const connection = (client as any).connection;
+  vi.spyOn(connection, 'isConnected').mockReturnValue(true);
+  const send = vi.spyOn(connection, 'send').mockResolvedValue(undefined);
+  const closed = vi.fn();
+  const completed = vi.fn();
+  client.on('CONNECTION_CLOSE', closed);
+  client.on('TASK_COMPLETED', completed);
+  await client.listen('task-fixture');
+  send.mockClear();
+  connection.emit('close', { code: 1006, reason: 'synthetic outage' });
+  expect(closed).toHaveBeenCalledOnce();
+  expect(completed).not.toHaveBeenCalled();
+  connection.emit('open', {});
+  await Promise.resolve();
+  expect(send).toHaveBeenCalledWith({ action: 'subscribe', type: 'task', id: 'task-fixture' });
+  vi.restoreAllMocks();
+});
