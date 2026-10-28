@@ -123,6 +123,8 @@ export interface TaskCompletedEvent {
 	completedAt: string;
 	deliveryFee: number;
 	paymentStatus?: 'PENDING' | 'RELEASED';
+	/** True when the task had a completion code and the rider entered it */
+	completionCodeVerified?: boolean;
 }
 
 /**

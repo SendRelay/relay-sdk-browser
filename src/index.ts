@@ -74,6 +74,19 @@ export {
 // Error classes
 export { RelayError, ConnectionError, TokenError } from './errors';
 
+// Rider presence map helpers
+export { presenceToGeoJSON } from './presence/presence';
+export type {
+	PresenceCell,
+	PresenceDensity,
+	PresenceFeature,
+	PresenceFeatureCollection,
+	PresencePoint,
+	PresenceResolution,
+	PresenceResponse,
+	PresenceVehicleType,
+} from './presence/presence';
+
 // Types
 export type {
 	// Event types
