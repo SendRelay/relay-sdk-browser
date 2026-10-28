@@ -6,7 +6,9 @@
 
 Official Browser SDK for the [Relay](https://sendrelay.com.ng) delivery platform. This is a **client-side SDK** designed for frontend web applications.
 
-> **ℹ️ Client-Side SDK:** This SDK uses WebSocket tokens (not API keys) for secure client authentication. Tokens must be provisioned by your backend using [@relay-sdk/sdk-node](../sdk-node) (Server SDK).
+📖 **Full documentation:** [Live tracking guide](https://docs.sendrelay.com.ng/tracking) · [SDK reference](https://docs.sendrelay.com.ng/sdks/browser-sdk) · [Recipes](https://docs.sendrelay.com.ng/sdks/browser-sdk/examples)
+
+> **ℹ️ Client-Side SDK:** This SDK uses WebSocket tokens (not API keys) for secure client authentication. Tokens must be provisioned by your backend using [@relay-sdk/sdk-node](https://www.npmjs.com/package/@relay-sdk/sdk-node) (Server SDK).
 
 ## Features
 
@@ -117,7 +119,7 @@ app.post('/api/relay/token', async (req, res) => {
 });
 ```
 
-See **[WEBSOCKET_AUTH.md](https://github.com/SendRelay/relay-sdk-node/blob/main/WEBSOCKET_AUTH.md)** for complete backend setup guide.
+Check ownership against **your** saved orders: Relay only knows the task belongs to your account, not which of your users may see it. See [Tracking tokens](https://docs.sendrelay.com.ng/authentication#tracking-tokens) for the full backend guide.
 
 ### 2. Listen to Task Updates in Browser
 
@@ -321,10 +323,10 @@ new RelayRealtimeClient(options: RelayRealtimeClientOptions)
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `getToken` | `(taskIds: string[]) => Promise<string> \| string` | **Required** | Callback to fetch authentication token from your backend |
-| `url` | `string` | `wss://ws.sendrelay.com.ng/v1` | WebSocket server URL |
+| `url` | `string` | `https://api.sendrelay.com.ng/v1/realtime/ws` (connected as `wss://`) | WebSocket server URL |
 | `deviceId` | `string` | `undefined` | Optional unique device identifier |
 | `autoRefresh` | `boolean` | `true` | Auto-refresh tokens before expiration |
-| `tokenExpirationWarningMs` | `number` | `300000` | Token expiration warning threshold (5 min) |
+| `tokenExpirationWarningMs` | `number` | `300000` | Refresh this long before the token expires (5 min). Issue tokens longer than this, or the SDK refreshes continuously |
 | `reconnect.enabled` | `boolean` | `true` | Enable automatic reconnection |
 | `reconnect.maxAttempts` | `number` | `Infinity` | Max reconnection attempts |
 | `reconnect.initialDelayMs` | `number` | `1000` | Initial reconnection delay (1s) |
@@ -509,6 +511,7 @@ relay.on('TASK_COMPLETED', (event) => {
   event.completedAt;   // string
   event.deliveryFee;   // number (kobo)
   event.paymentStatus; // 'PENDING' | 'RELEASED' | undefined
+  event.completionCodeVerified; // true when the task had a completion code; absent otherwise
 });
 ```
 
@@ -557,6 +560,8 @@ relay.on('STAGE_COMPLETED', (event) => {
 ```
 
 ### Payment Events (4 events)
+
+> Relay sends payment events (and `TASK_CREATED`) to your server as webhooks only. Customer apps won't receive them over realtime; they're typed here for completeness.
 
 #### `PAYMENT_PENDING`
 Payment held in escrow.
@@ -840,6 +845,19 @@ if (!relay.isConnected()) {
 - Replace `unsubscribe('task', id)` → `stopListening(id)`
 - Remove `updateToken()` calls → Automatic refresh now
 - Remove `autoConnect` option → Lazy connection now
+
+## Presence map helper
+
+`presenceToGeoJSON(presence, options?)` turns a presence response, fetched by your backend from `GET /v1/sdk/presence`, into a GeoJSON `FeatureCollection` for Mapbox, MapLibre, Leaflet or Google Maps:
+
+```typescript
+import { presenceToGeoJSON } from '@relay-sdk/sdk-browser';
+
+const presence = await fetch('/api/relay/presence?lat=6.5244&lng=3.3792').then((r) => r.json());
+map.getSource('riders').setData(presenceToGeoJSON(presence, { vehicleTypes: ['MOTORCYCLE'] }));
+```
+
+Each feature carries `cellId`, `resolution`, `density` (`LOW`/`MEDIUM`/`HIGH`) and `vehicleTypes`. See [Rider presence map](https://docs.sendrelay.com.ng/riders/presence-map).
 
 ## TypeScript Support
 
