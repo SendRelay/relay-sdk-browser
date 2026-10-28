@@ -22,6 +22,7 @@ export type {
 	PaymentDisputedEvent,
 	PaymentDisputeResolvedEvent,
 	RiderLocationUpdateEvent,
+	RiderRouteEta,
 	NewTaskOfferEvent,
 	ConnectionOpenEvent,
 	ConnectionCloseEvent,

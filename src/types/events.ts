@@ -242,7 +242,24 @@ export interface RiderLocationUpdateEvent {
 	riderId: string;
 	taskId: string;
 	location: Location;
+	/**
+	 * The rider's ETA to the stop they are heading to, from their navigation route and live
+	 * traffic. Missing when the rider's app hasn't reported one.
+	 */
+	eta?: RiderRouteEta;
 	timestamp?: string;
+}
+
+/**
+ * The rider's remaining time and road distance to a stop, as of the location update
+ */
+export interface RiderRouteEta {
+	/** Index of the stage the rider is heading to */
+	stageIndex: number;
+	/** Driving time left, in seconds (count down from the update's `timestamp`) */
+	seconds: number;
+	/** Road distance left, in metres */
+	meters: number;
 }
 
 /**

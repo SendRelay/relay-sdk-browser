@@ -109,6 +109,7 @@ export type {
 	PaymentDisputeResolvedEvent,
 	// Real-time events
 	RiderLocationUpdateEvent,
+	RiderRouteEta,
 	NewTaskOfferEvent,
 	// Connection events
 	ConnectionOpenEvent,
