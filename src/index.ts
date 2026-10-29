@@ -75,6 +75,18 @@ export {
 export { RelayError, ConnectionError, TokenError } from './errors';
 
 // Rider presence map helpers
+export { createTaskTracker, toTrackedEta } from './tracker';
+export type {
+	TaskTracker,
+	TaskTrackerOptions,
+	TaskTrackerState,
+	TrackedEta,
+	TrackedEvent,
+	TrackedRider,
+	TrackedTaskStatus,
+	TrackerConnection,
+} from './tracker';
+
 export { presenceToGeoJSON } from './presence/presence';
 export type {
 	PresenceCell,

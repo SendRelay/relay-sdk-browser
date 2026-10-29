@@ -62,7 +62,7 @@ export interface RelayRealtimeClientOptions {
   /** WebSocket URL (default: https://api.sendrelay.com.ng/v1/realtime/ws, connected as wss) */
   url?: string;
 
-  /** Unique device ID (optional) */
+  /** Device ID sent on connect (default: a random ID per client instance) */
   deviceId?: string;
 
   /** Auto-refresh tokens before expiration (default: true) */
@@ -133,6 +133,16 @@ export interface RelayRealtimeClientOptions {
  * });
  * ```
  */
+/**
+ * A random device identifier. Uses crypto.randomUUID where it exists (browsers, Node 19+) and
+ * falls back to Math.random elsewhere, such as React Native's Hermes engine.
+ */
+function generateDeviceId(): string {
+  const random = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto?.randomUUID;
+  if (typeof random === 'function') return `web-${random.call(globalThis.crypto)}`;
+  return `web-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
 export class RelayRealtimeClient {
   private connection: WebSocketConnection;
   private subscriptions: SubscriptionManager;
@@ -176,7 +186,8 @@ export class RelayRealtimeClient {
     // Merge with defaults
     this.options = {
       getToken: options.getToken,
-      deviceId: options.deviceId,
+      // APP connections must name a device; one per client instance, like relay_flutter.
+      deviceId: options.deviceId?.trim() || generateDeviceId(),
       url: options.url || RELAY_DEFAULT_WEBSOCKET_URL,
       autoRefresh: options.autoRefresh ?? true,
       tokenExpirationWarningMs: options.tokenExpirationWarningMs ?? 5 * 60 * 1000, // 5 minutes
