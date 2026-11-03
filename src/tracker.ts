@@ -13,13 +13,20 @@ import type { EventType, RiderRouteEta } from './types';
 
 /** Lifecycle statuses a tracked task can be in. */
 export type TrackedTaskStatus =
+	/** Booked for a pickup time; Relay has not started looking yet */
+	| 'SCHEDULED'
 	| 'PENDING'
+	/** Still looking for a rider after the first offers, until `searchExpiresAt` */
+	| 'SEARCHING'
 	| 'OFFERED'
 	| 'ASSIGNED'
 	| 'IN_PROGRESS'
 	| 'COMPLETED'
 	| 'FAILED'
-	| 'CANCELLED';
+	| 'CANCELLED'
+	// Relay adds statuses over time (for example as `initial.status` from your backend); one this
+	// version does not list is kept as its raw string and treated as not finished.
+	| (string & {});
 
 /** Where the socket is, from the app's point of view. */
 export type TrackerConnection = 'idle' | 'connecting' | 'live' | 'reconnecting' | 'offline';
@@ -69,6 +76,11 @@ export interface TaskTrackerState {
 	rider: TrackedRider | null;
 	/** The rider's road ETA to their next stop, or null when there isn't one. */
 	eta: TrackedEta | null;
+	/**
+	 * When Relay stops looking for a rider (ISO 8601), for tasks that keep looking or are booked;
+	 * null otherwise. Count down to this while the status is SEARCHING.
+	 */
+	searchExpiresAt: string | null;
 	/** Lifecycle events seen while tracking, newest first (location updates excluded). */
 	events: TrackedEvent[];
 	/** True once the task is COMPLETED, FAILED or CANCELLED. */
@@ -83,6 +95,8 @@ export interface TaskTrackerOptions {
 		currentStageIndex?: number | null;
 		/** `liveEta` from `GET /v1/sdk/tasks/{taskId}`. */
 		eta?: TrackedEta | null;
+		/** `task.dispatch.searchExpiresAt` from your task read. */
+		searchExpiresAt?: string | null;
 	};
 	/** How many lifecycle events to keep (default 50). */
 	maxEvents?: number;
@@ -99,6 +113,9 @@ export interface TaskTracker {
 }
 
 const LIFECYCLE: Partial<Record<EventType, TrackedTaskStatus>> = {
+	TASK_DISPATCH_STARTED: 'PENDING',
+	TASK_SEARCHING: 'SEARCHING',
+	TASK_RIDERS_NEARBY: undefined,
 	TASK_OFFERED: 'OFFERED',
 	TASK_ASSIGNED: 'ASSIGNED',
 	TASK_IN_PROGRESS: 'IN_PROGRESS',
@@ -149,6 +166,7 @@ export function createTaskTracker(
 		currentStageIndex: options.initial?.currentStageIndex ?? null,
 		rider: null,
 		eta: options.initial?.eta ?? null,
+		searchExpiresAt: options.initial?.searchExpiresAt ?? null,
 		events: [],
 		finished: options.initial?.status ? TERMINAL.has(options.initial.status) : false,
 		error: null,
@@ -178,6 +196,8 @@ export function createTaskTracker(
 			payload?.failedAt ??
 			payload?.assignedAt ??
 			payload?.startedAt ??
+			payload?.searchingAt ??
+			payload?.detectedAt ??
 			payload?.offeredAt ??
 			new Date().toISOString();
 		set({
@@ -186,6 +206,7 @@ export function createTaskTracker(
 			currentStageIndex: stageIndex,
 			// The ETA belongs to a stop; drop it once the task moves on or ends.
 			eta: finished || (state.eta && stageIndex !== null && state.eta.stageIndex !== stageIndex) ? null : state.eta,
+			searchExpiresAt: typeof payload?.searchExpiresAt === 'string' ? payload.searchExpiresAt : state.searchExpiresAt,
 			events: [{ type, at: String(at), payload }, ...state.events].slice(0, maxEvents),
 		});
 	}

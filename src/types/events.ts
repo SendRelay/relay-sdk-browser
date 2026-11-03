@@ -5,11 +5,14 @@
  */
 
 /**
- * All event types (19 total: 14 business + 5 connection)
+ * All event types (22 total: 17 business + 5 connection)
  */
 export type EventType =
 	// Task lifecycle events
 	| 'TASK_CREATED'
+	| 'TASK_DISPATCH_STARTED'
+	| 'TASK_SEARCHING'
+	| 'TASK_RIDERS_NEARBY'
 	| 'TASK_OFFERED'
 	| 'TASK_ASSIGNED'
 	| 'TASK_IN_PROGRESS'
@@ -72,6 +75,41 @@ export interface TaskCreatedEvent {
 	totalFee: number;
 	stages: Stage[];
 	createdAt: string;
+}
+
+/**
+ * A booked (dispatch SCHEDULED) task's search opened: Relay is now looking for a rider
+ */
+export interface TaskDispatchStartedEvent {
+	taskId: string;
+	developerId: string;
+	status: 'PENDING';
+	pickupAt: string;
+	searchExpiresAt: string;
+	startedAt: string;
+}
+
+/**
+ * The task keeps looking for a rider after its first offers, until `searchExpiresAt`
+ */
+export interface TaskSearchingEvent {
+	taskId: string;
+	developerId: string;
+	status: 'SEARCHING';
+	strategy: 'WAIT_FOR_RIDER' | 'SCHEDULED' | (string & {});
+	searchExpiresAt: string;
+	searchingAt: string;
+}
+
+/**
+ * Manual tasks (autoAssign false) still waiting: eligible riders are near the pickup. A count
+ * only, at most every few minutes; fetch available riders to offer the task to them.
+ */
+export interface TaskRidersNearbyEvent {
+	taskId: string;
+	developerId: string;
+	ridersNearby: number;
+	detectedAt: string;
 }
 
 /**
@@ -332,6 +370,9 @@ export interface TokenExpiringEvent {
  */
 export interface EventPayloadMap {
 	TASK_CREATED: TaskCreatedEvent;
+	TASK_DISPATCH_STARTED: TaskDispatchStartedEvent;
+	TASK_SEARCHING: TaskSearchingEvent;
+	TASK_RIDERS_NEARBY: TaskRidersNearbyEvent;
 	TASK_OFFERED: TaskOfferedEvent;
 	TASK_ASSIGNED: TaskAssignedEvent;
 	TASK_IN_PROGRESS: TaskInProgressEvent;

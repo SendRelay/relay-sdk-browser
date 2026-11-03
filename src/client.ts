@@ -752,6 +752,9 @@ export class RelayRealtimeClient {
   private isKnownEventType(value: string): value is EventType {
     const knownTypes: readonly EventType[] = [
       'TASK_CREATED',
+      'TASK_DISPATCH_STARTED',
+      'TASK_SEARCHING',
+      'TASK_RIDERS_NEARBY',
       'TASK_OFFERED',
       'TASK_ASSIGNED',
       'TASK_IN_PROGRESS',

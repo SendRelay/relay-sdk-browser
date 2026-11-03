@@ -78,6 +78,43 @@ describe('createTaskTracker', () => {
 		expect(tracker.getState().eta?.seconds).toBe(300);
 	});
 
+	it('follows a booking: its search opens, it keeps looking, then a rider is assigned', async () => {
+		const client = fakeClient();
+		const tracker = createTaskTracker(client as any, 't1', { initial: { status: 'SCHEDULED' } });
+		await tracker.start();
+		expect(tracker.getState()).toMatchObject({ status: 'SCHEDULED', finished: false, searchExpiresAt: null });
+
+		client.emit('TASK_DISPATCH_STARTED', {
+			taskId: 't1', status: 'PENDING', pickupAt: '2026-11-05T15:00:00.000Z',
+			searchExpiresAt: '2026-11-05T15:30:00.000Z', startedAt: '2026-11-05T14:40:00.000Z',
+		});
+		expect(tracker.getState()).toMatchObject({ status: 'PENDING', searchExpiresAt: '2026-11-05T15:30:00.000Z' });
+
+		client.emit('TASK_SEARCHING', {
+			taskId: 't1', status: 'SEARCHING', strategy: 'SCHEDULED',
+			searchExpiresAt: '2026-11-05T15:30:00.000Z', searchingAt: '2026-11-05T14:43:00.000Z',
+		});
+		client.emit('TASK_RIDERS_NEARBY', { taskId: 't1', ridersNearby: 2, detectedAt: '2026-11-05T14:50:00.000Z' });
+		let s = tracker.getState();
+		expect(s.status).toBe('SEARCHING');
+		expect(s.events.map((e) => [e.type, e.at])).toEqual([
+			['TASK_RIDERS_NEARBY', '2026-11-05T14:50:00.000Z'],
+			['TASK_SEARCHING', '2026-11-05T14:43:00.000Z'],
+			['TASK_DISPATCH_STARTED', '2026-11-05T14:40:00.000Z'],
+		]);
+
+		client.emit('TASK_ASSIGNED', { taskId: 't1', status: 'ASSIGNED', currentStageIndex: 0, assignedAt: '2026-11-05T14:52:00.000Z' });
+		s = tracker.getState();
+		expect(s.status).toBe('ASSIGNED');
+	});
+
+	it('can be seeded with the search deadline from a task read', () => {
+		const tracker = createTaskTracker(fakeClient() as any, 't1', {
+			initial: { status: 'SEARCHING', searchExpiresAt: '2026-11-05T15:30:00.000Z' },
+		});
+		expect(tracker.getState()).toMatchObject({ status: 'SEARCHING', searchExpiresAt: '2026-11-05T15:30:00.000Z' });
+	});
+
 	it('ignores other tasks', async () => {
 		const client = fakeClient();
 		const tracker = createTaskTracker(client as any, 't1');
