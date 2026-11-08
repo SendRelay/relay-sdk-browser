@@ -120,6 +120,10 @@ const LIFECYCLE: Partial<Record<EventType, TrackedTaskStatus>> = {
 	TASK_ASSIGNED: 'ASSIGNED',
 	TASK_IN_PROGRESS: 'IN_PROGRESS',
 	STAGE_COMPLETED: undefined,
+	STAGE_ARRIVED: undefined,
+	TASK_DETAILS_UPDATED: undefined,
+	// Opt-in (onRiderCancel FIND_ANOTHER): the rider cancelled and a new one is being found.
+	TASK_RIDER_UNASSIGNED: 'PENDING',
 	TASK_COMPLETED: 'COMPLETED',
 	TASK_FAILED: 'FAILED',
 	TASK_CANCELLED: 'CANCELLED',
@@ -199,6 +203,7 @@ export function createTaskTracker(
 			payload?.searchingAt ??
 			payload?.detectedAt ??
 			payload?.offeredAt ??
+			payload?.arrivedAt ??
 			new Date().toISOString();
 		set({
 			status,
@@ -208,6 +213,8 @@ export function createTaskTracker(
 			eta: finished || (state.eta && stageIndex !== null && state.eta.stageIndex !== stageIndex) ? null : state.eta,
 			searchExpiresAt: typeof payload?.searchExpiresAt === 'string' ? payload.searchExpiresAt : state.searchExpiresAt,
 			events: [{ type, at: String(at), payload }, ...state.events].slice(0, maxEvents),
+			// The rider who cancelled is gone; their last position and ETA no longer apply.
+			...(type === 'TASK_RIDER_UNASSIGNED' ? { rider: null, eta: null } : {}),
 		});
 	}
 

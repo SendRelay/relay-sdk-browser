@@ -5,7 +5,7 @@
  */
 
 /**
- * All event types (22 total: 17 business + 5 connection)
+ * All event types (25 total: 20 business + 5 connection)
  */
 export type EventType =
 	// Task lifecycle events
@@ -20,6 +20,9 @@ export type EventType =
 	| 'TASK_FAILED'
 	| 'TASK_CANCELLED'
 	| 'STAGE_COMPLETED'
+	| 'STAGE_ARRIVED'
+	| 'TASK_DETAILS_UPDATED'
+	| 'TASK_RIDER_UNASSIGNED'
 	// Payment events
 	| 'PAYMENT_PENDING'
 	| 'PAYMENT_RELEASED'
@@ -105,6 +108,37 @@ export interface TaskSearchingEvent {
  * Manual tasks (autoAssign false) still waiting: eligible riders are near the pickup. A count
  * only, at most every few minutes; fetch available riders to offer the task to them.
  */
+/** The rider reached a stop (inside its geofence), once per stop. */
+export interface StageArrivedEvent {
+	taskId: string;
+	developerId: string;
+	riderId: string;
+	stageIndex: number;
+	stageType: 'PICKUP' | 'DROPOFF';
+	arrivedAt: string;
+}
+
+/** The business edited notes, instructions or a stop's contact. Read the task for the new values. */
+export interface TaskDetailsUpdatedEvent {
+	taskId: string;
+	changed: string[];
+	stageIndexes: number[];
+	timestamp: string;
+}
+
+/**
+ * The rider cancelled before pickup and Relay is finding another
+ * (`dispatch.onRiderCancel: 'FIND_ANOTHER'` only). The task is PENDING again.
+ */
+export interface TaskRiderUnassignedEvent {
+	taskId: string;
+	riderId: string;
+	reason: string;
+	status: 'PENDING';
+	researchesLeft: number;
+	timestamp: string;
+}
+
 export interface TaskRidersNearbyEvent {
 	taskId: string;
 	developerId: string;
@@ -380,6 +414,9 @@ export interface EventPayloadMap {
 	TASK_FAILED: TaskFailedEvent;
 	TASK_CANCELLED: TaskCancelledEvent;
 	STAGE_COMPLETED: StageCompletedEvent;
+	STAGE_ARRIVED: StageArrivedEvent;
+	TASK_DETAILS_UPDATED: TaskDetailsUpdatedEvent;
+	TASK_RIDER_UNASSIGNED: TaskRiderUnassignedEvent;
 	PAYMENT_PENDING: PaymentPendingEvent;
 	PAYMENT_RELEASED: PaymentReleasedEvent;
 	PAYMENT_DISPUTED: PaymentDisputedEvent;
