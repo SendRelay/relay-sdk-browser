@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.0 — 2026-11-09
+
+- Task events carry `revision` (the task's revision after the event, as on webhooks). The client delivers each task's events in order and once: a frame at or below the last revision it delivered for that task is dropped. Location updates and frames without a revision are always delivered. `revision` is on every task event type.
+- `requirements` on `PresenceResponse` (`PresenceRequirements`, `PresenceEquipment`): when your backend asks for presence for a job (`taskType`), only riders who could take it are counted, and this says what they have.
+
 ## 1.9.0 — 2026-11-08
 
 - New realtime events: `STAGE_ARRIVED` (the rider reached a stop), `TASK_DETAILS_UPDATED` (notes, instructions or a stop contact changed) and, for tasks created with `dispatch.onRiderCancel: 'FIND_ANOTHER'`, `TASK_RIDER_UNASSIGNED`.

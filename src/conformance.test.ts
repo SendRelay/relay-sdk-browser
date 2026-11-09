@@ -48,6 +48,27 @@ describe.skipIf(!available)('conformance', () => {
 		}
 	});
 
+	describe('ordering', () => {
+		for (const c of read('realtime/ordering.json').cases) {
+			it(c.name, () => {
+				const client = newClient();
+				const seen: Array<{ event: string; payload: any }> = [];
+				for (const event of manifest.realtime.events) {
+					client.on(event, (payload: any) => seen.push({ event, payload }));
+				}
+				for (const frame of c.frames) (client as any).handleIncomingMessage(frame);
+				expect(seen.map((s) => s.event)).toEqual(c.expect.map((e: any) => e.event));
+				c.expect.forEach((e: any, i: number) => {
+					for (const [key, want] of Object.entries(e.fields ?? {})) {
+						const got = lookup(seen[i]!.payload, key);
+						if (want === null) expect(got ?? null, key).toBeNull();
+						else expect(got, key).toEqual(want);
+					}
+				});
+			});
+		}
+	});
+
 	describe('url', () => {
 		for (const c of url.cases) {
 			it(c.name, () => {

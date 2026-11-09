@@ -85,6 +85,8 @@ export interface TaskCreatedEvent {
  */
 export interface TaskDispatchStartedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	status: 'PENDING';
 	pickupAt: string;
@@ -97,6 +99,8 @@ export interface TaskDispatchStartedEvent {
  */
 export interface TaskSearchingEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	status: 'SEARCHING';
 	strategy: 'WAIT_FOR_RIDER' | 'SCHEDULED' | (string & {});
@@ -111,6 +115,8 @@ export interface TaskSearchingEvent {
 /** The rider reached a stop (inside its geofence), once per stop. */
 export interface StageArrivedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	riderId: string;
 	stageIndex: number;
@@ -121,6 +127,8 @@ export interface StageArrivedEvent {
 /** The business edited notes, instructions or a stop's contact. Read the task for the new values. */
 export interface TaskDetailsUpdatedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	changed: string[];
 	stageIndexes: number[];
 	timestamp: string;
@@ -132,6 +140,8 @@ export interface TaskDetailsUpdatedEvent {
  */
 export interface TaskRiderUnassignedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	riderId: string;
 	reason: string;
 	status: 'PENDING';
@@ -141,6 +151,8 @@ export interface TaskRiderUnassignedEvent {
 
 export interface TaskRidersNearbyEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	ridersNearby: number;
 	detectedAt: string;
@@ -151,6 +163,8 @@ export interface TaskRidersNearbyEvent {
  */
 export interface TaskOfferedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	status: 'OFFERED';
 	tier: number;
@@ -164,6 +178,8 @@ export interface TaskOfferedEvent {
  */
 export interface TaskAssignedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	riderId: string;
 	developerId: string;
 	status: 'ASSIGNED';
@@ -177,6 +193,8 @@ export interface TaskAssignedEvent {
  */
 export interface TaskInProgressEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	riderId: string;
 	developerId: string;
 	status: 'IN_PROGRESS';
@@ -189,6 +207,8 @@ export interface TaskInProgressEvent {
  */
 export interface TaskCompletedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	riderId: string;
 	developerId: string;
 	status: 'COMPLETED';
@@ -204,6 +224,8 @@ export interface TaskCompletedEvent {
  */
 export interface TaskFailedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	riderId?: string;
 	status: 'FAILED';
@@ -219,6 +241,8 @@ export interface TaskFailedEvent {
  */
 export interface TaskCancelledEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	riderId?: string | null;
 	cancelledBy?: 'DEVELOPER' | 'RIDER';
@@ -232,6 +256,8 @@ export interface TaskCancelledEvent {
  */
 export interface StageCompletedEvent {
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	riderId: string;
 	developerId: string;
 	stageIndex: number;
@@ -253,6 +279,8 @@ export interface StageCompletedEvent {
 export interface PaymentPendingEvent {
 	transactionId: string;
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	riderId: string;
 	amount: number;
@@ -267,6 +295,8 @@ export interface PaymentPendingEvent {
 export interface PaymentReleasedEvent {
 	transactionId: string;
 	taskId: string;
+	/** The task's revision after this event, as on webhooks and task reads. The client drops frames older than one it already delivered for the task. */
+	revision?: number;
 	developerId: string;
 	riderId: string;
 	amount: number;

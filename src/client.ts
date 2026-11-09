@@ -150,6 +150,8 @@ export class RelayRealtimeClient {
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
   private currentToken: string | null = null;
   private listeningTo = new Set<string>(); // Track task IDs being listened to
+  // Highest revision delivered per task: a frame at or below it is a duplicate or arrived late.
+  private lastRevision = new Map<string, number>();
   private options: Required<
     Omit<RelayRealtimeClientOptions, 'reconnect' | 'heartbeat' | 'logger' | 'deviceId'>
   > & {
@@ -334,6 +336,7 @@ export class RelayRealtimeClient {
    */
   async stopListening(taskId: string): Promise<void> {
     this.listeningTo.delete(taskId);
+    this.lastRevision.delete(taskId);
 
     if (!this.subscriptions.has('task', taskId)) {
       this.log('debug', `Not listening to ${taskId}`);
@@ -577,8 +580,28 @@ export class RelayRealtimeClient {
       return;
     }
 
+    if (this.isStale(payload)) {
+      this.log('debug', `Dropped ${eventType} at revision ${payload.revision}: already past it`);
+      return;
+    }
+
     // Emit to event listeners
     this.events.emit(eventType, payload);
+  }
+
+  /**
+   * Task events carry the task's `revision`, which only grows. A frame at or below the last one
+   * delivered for its task is a duplicate or arrived out of order, and is not delivered. Frames
+   * without a revision (location updates, older servers) are always delivered.
+   */
+  private isStale(payload: any): boolean {
+    const revision = payload?.revision;
+    const taskId = payload?.taskId;
+    if (typeof revision !== 'number' || !Number.isFinite(revision) || typeof taskId !== 'string') return false;
+    const last = this.lastRevision.get(taskId);
+    if (last !== undefined && revision <= last) return true;
+    this.lastRevision.set(taskId, revision);
+    return false;
   }
 
   /**

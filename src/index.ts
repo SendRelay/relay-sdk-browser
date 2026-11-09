@@ -91,9 +91,11 @@ export { presenceToGeoJSON } from './presence/presence';
 export type {
 	PresenceCell,
 	PresenceDensity,
+	PresenceEquipment,
 	PresenceFeature,
 	PresenceFeatureCollection,
 	PresencePoint,
+	PresenceRequirements,
 	PresenceResolution,
 	PresenceResponse,
 	PresenceVehicleType,

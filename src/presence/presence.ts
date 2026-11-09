@@ -39,6 +39,17 @@ export interface PresenceCell {
 	vehicleTypes: PresenceVehicleType[];
 }
 
+/** Equipment on a rider's vehicle. Treat a value you don't recognise as equipment you can't check. */
+export type PresenceEquipment = 'BOX' | 'REFRIGERATION' | 'AIR_CONDITIONING' | (string & {});
+
+/**
+ * What the counted riders have when presence is filtered by a job (`taskType`): each vehicle, with
+ * the equipment a rider on it needs. The same shape as `requirements` on a quote or task.
+ */
+export interface PresenceRequirements {
+	vehicles: Array<{ vehicleType: PresenceVehicleType; equipment: PresenceEquipment[] }>;
+}
+
 /** Response of `GET /v1/sdk/presence` */
 export interface PresenceResponse {
 	mode: 'live' | 'test';
@@ -56,6 +67,8 @@ export interface PresenceResponse {
 	capped: boolean;
 	generatedAt: string;
 	refreshAfterSeconds: number;
+	/** Set when your backend asked for a job (`taskType`): only riders who could take it are counted */
+	requirements?: PresenceRequirements;
 }
 
 /** GeoJSON (RFC 7946) polygon feature for one presence cell */
