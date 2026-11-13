@@ -1,5 +1,5 @@
 /**
- * Common types for the Relay browser SDK
+ * Common types for the SendRelay browser SDK
  *
  * @module types/common
  */

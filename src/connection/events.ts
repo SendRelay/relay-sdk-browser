@@ -2,7 +2,7 @@
  * WebSocket connection-level events
  *
  * These are low-level events emitted by the WebSocketConnection class.
- * They are separate from the high-level Relay events.
+ * They are separate from the high-level SendRelay events.
  *
  * @module connection/events
  */

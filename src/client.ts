@@ -1,7 +1,7 @@
 /**
- * Relay Real-time WebSocket Client
+ * SendRelay Real-time WebSocket Client
  *
- * Main entry point for the Relay browser SDK. Provides real-time task and rider
+ * Main entry point for the SendRelay browser SDK. Provides real-time task and rider
  * updates via WebSocket subscriptions.
  *
  * @module client
@@ -97,7 +97,7 @@ export interface RelayRealtimeClientOptions {
 }
 
 /**
- * Relay Real-time Client
+ * SendRelay Real-time Client
  *
  * WebSocket client for real-time task updates with automatic token management.
  *
@@ -162,7 +162,7 @@ export class RelayRealtimeClient {
   };
 
   /**
-   * Create a new Relay real-time client
+   * Create a new SendRelay real-time client
    *
    * @param options - Client configuration
    *

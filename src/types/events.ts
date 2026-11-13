@@ -1,5 +1,5 @@
 /**
- * Event types and payloads for the Relay browser SDK
+ * Event types and payloads for the SendRelay browser SDK
  *
  * @module types/events
  */
@@ -81,7 +81,7 @@ export interface TaskCreatedEvent {
 }
 
 /**
- * A booked (dispatch SCHEDULED) task's search opened: Relay is now looking for a rider
+ * A booked (dispatch SCHEDULED) task's search opened: SendRelay is now looking for a rider
  */
 export interface TaskDispatchStartedEvent {
 	taskId: string;
@@ -135,7 +135,7 @@ export interface TaskDetailsUpdatedEvent {
 }
 
 /**
- * The rider cancelled before pickup and Relay is finding another
+ * The rider cancelled before pickup and SendRelay is finding another
  * (`dispatch.onRiderCancel: 'FIND_ANOTHER'` only). The task is PENDING again.
  */
 export interface TaskRiderUnassignedEvent {

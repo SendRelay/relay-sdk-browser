@@ -1,5 +1,5 @@
 /**
- * Error classes for the Relay browser SDK
+ * Error classes for the SendRelay browser SDK
  *
  * @module errors
  */

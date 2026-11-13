@@ -13,7 +13,7 @@ import type { EventType, RiderRouteEta } from './types';
 
 /** Lifecycle statuses a tracked task can be in. */
 export type TrackedTaskStatus =
-	/** Booked for a pickup time; Relay has not started looking yet */
+	/** Booked for a pickup time; SendRelay has not started looking yet */
 	| 'SCHEDULED'
 	| 'PENDING'
 	/** Still looking for a rider after the first offers, until `searchExpiresAt` */
@@ -24,7 +24,7 @@ export type TrackedTaskStatus =
 	| 'COMPLETED'
 	| 'FAILED'
 	| 'CANCELLED'
-	// Relay adds statuses over time (for example as `initial.status` from your backend); one this
+	// SendRelay adds statuses over time (for example as `initial.status` from your backend); one this
 	// version does not list is kept as its raw string and treated as not finished.
 	| (string & {});
 
@@ -77,7 +77,7 @@ export interface TaskTrackerState {
 	/** The rider's road ETA to their next stop, or null when there isn't one. */
 	eta: TrackedEta | null;
 	/**
-	 * When Relay stops looking for a rider (ISO 8601), for tasks that keep looking or are booked;
+	 * When SendRelay stops looking for a rider (ISO 8601), for tasks that keep looking or are booked;
 	 * null otherwise. Count down to this while the status is SEARCHING.
 	 */
 	searchExpiresAt: string | null;

@@ -1,10 +1,10 @@
-# Relay Browser SDK
+# SendRelay Browser SDK
 
 [![npm version](https://badge.fury.io/js/%40relay-sdk%2Fsdk-browser.svg)](https://www.npmjs.com/package/@relay-sdk/sdk-browser)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 **🌐 Browser SDK** | WebSocket Client
 
-Official Browser SDK for the [Relay](https://sendrelay.com.ng) delivery platform. This is a **client-side SDK** designed for frontend web applications.
+Official Browser SDK for the [SendRelay](https://sendrelay.com.ng) delivery platform. This is a **client-side SDK** designed for frontend web applications.
 
 📖 **Full documentation:** [Live tracking guide](https://docs.sendrelay.com.ng/tracking) · [SDK reference](https://docs.sendrelay.com.ng/sdks/browser-sdk) · [Recipes](https://docs.sendrelay.com.ng/sdks/browser-sdk/examples)
 
@@ -119,7 +119,7 @@ app.post('/api/relay/token', async (req, res) => {
 });
 ```
 
-Check ownership against **your** saved orders: Relay only knows the task belongs to your account, not which of your users may see it. See [Tracking tokens](https://docs.sendrelay.com.ng/authentication#tracking-tokens) for the full backend guide.
+Check ownership against **your** saved orders: SendRelay only knows the task belongs to your account, not which of your users may see it. See [Tracking tokens](https://docs.sendrelay.com.ng/authentication#tracking-tokens) for the full backend guide.
 
 ### 2. Listen to Task Updates in Browser
 
@@ -561,7 +561,7 @@ relay.on('STAGE_COMPLETED', (event) => {
 
 ### Payment Events (4 events)
 
-> Relay sends payment events (and `TASK_CREATED`) to your server as webhooks only. Customer apps won't receive them over realtime; they're typed here for completeness.
+> SendRelay sends payment events (and `TASK_CREATED`) to your server as webhooks only. Customer apps won't receive them over realtime; they're typed here for completeness.
 
 #### `PAYMENT_PENDING`
 Payment held in escrow.
@@ -721,7 +721,7 @@ try {
   } else if (error instanceof TokenError) {
     console.error('Invalid token:', error.message);
   } else if (error instanceof RelayError) {
-    console.error('Relay error:', error.message);
+    console.error('SendRelay error:', error.message);
   }
 }
 

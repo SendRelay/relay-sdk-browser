@@ -1,7 +1,7 @@
 /**
- * Relay SDK for Browsers - Browser SDK
+ * SendRelay SDK for Browsers - Browser SDK
  *
- * Official **client-side** SDK for integrating with the Relay delivery platform from browser applications.
+ * Official **client-side** SDK for integrating with the SendRelay delivery platform from browser applications.
  *
  * **ℹ️ Client-Side SDK:** This SDK uses secure WebSocket tokens (not API keys) for authentication.
  * Tokens must be provisioned by your backend using @relay-sdk/sdk-node (Server SDK).

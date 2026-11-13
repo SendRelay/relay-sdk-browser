@@ -1,5 +1,5 @@
 /**
- * TypeScript type definitions for the Relay browser SDK
+ * TypeScript type definitions for the SendRelay browser SDK
  *
  * @module types
  */

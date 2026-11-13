@@ -1,5 +1,5 @@
 /**
- * Event emitter for the Relay browser SDK
+ * Event emitter for the SendRelay browser SDK
  *
  * @module events/emitter
  */

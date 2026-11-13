@@ -3,7 +3,7 @@
  *
  * Presence is fetched with an API key (`GET /v1/sdk/presence`, or `relay.presence.get()` in
  * @relay-sdk/sdk-node), so browsers get it through your backend, exactly like realtime tokens.
- * Responses are cached by Relay for `refreshAfterSeconds`; your backend can cache them too.
+ * Responses are cached by SendRelay for `refreshAfterSeconds`; your backend can cache them too.
  *
  * @module presence
  */
