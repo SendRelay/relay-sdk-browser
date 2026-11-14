@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.0 — 2026-11-14
+
+- `PresenceVehicleType` no longer includes `BIKE`; motorcycles are always `MOTORCYCLE`.
+
 ## 1.10.0 — 2026-11-09
 
 - Task events carry `revision` (the task's revision after the event, as on webhooks). The client delivers each task's events in order and once: a frame at or below the last revision it delivered for that task is dropped. Location updates and frames without a revision are always delivered. `revision` is on every task event type.

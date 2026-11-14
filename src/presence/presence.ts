@@ -12,7 +12,6 @@ export type PresenceResolution = 'BLOCK' | 'NEIGHBOURHOOD' | 'DISTRICT';
 export type PresenceDensity = 'LOW' | 'MEDIUM' | 'HIGH';
 export type PresenceVehicleType =
 	| 'BICYCLE'
-	| 'BIKE'
 	| 'MOTORCYCLE'
 	| 'TRICYCLE'
 	| 'CAR'

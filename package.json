@@ -1,6 +1,6 @@
 {
   "name": "@relay-sdk/sdk-browser",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Official SendRelay Delivery Platform Browser SDK - Real-time WebSocket client for frontend applications",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
